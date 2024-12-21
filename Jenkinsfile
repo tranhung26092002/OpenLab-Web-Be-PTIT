@@ -55,8 +55,6 @@ pipeline {
                     // Build jar file
                     echo 'Building application...'
                     sh './mvnw clean package -DskipTests'
-                    // Liệt kê các file trong thư mục target để kiểm tra xem .jar có tồn tại không
-                    sh 'ls -l target/'
                 }
             }
         }
@@ -65,11 +63,11 @@ pipeline {
                 script {
                     // Kiểm tra sự tồn tại của mqtt-service.jar
                     sh '''
-                    if [ ! -f target/mqtt-service.jar ]; then
-                        echo "mqtt-service.jar not found! Exiting."
+                    if [ ! -f target/*.jar ]; then
+                        echo "No .jar file found in target directory! Exiting."
                         exit 1
                     fi
-                    echo "mqtt-service.jar found!"
+                    echo ".jar file found!"
                     '''
                 }
             }
@@ -77,10 +75,11 @@ pipeline {
         stage('Build and Deploy with Docker') {
             steps {
                 script {
-                    // Using Docker Compose to build and deploy
+                    // Xác nhận tên image và container trong Docker Compose
                     echo 'Deploying application with Docker Compose...'
                     sh '''
                     docker-compose down
+                    docker container prune -f   # Xóa các container đã dừng
                     docker-compose up -d --build
                     '''
                 }
