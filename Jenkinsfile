@@ -63,11 +63,11 @@ pipeline {
                 script {
                     // Kiểm tra sự tồn tại của mqtt-service.jar
                     sh '''
-                    if [ ! -f target/mqtt-service.jar ]; then
-                        echo "mqtt-service.jar not found! Exiting."
+                    if [ ! -f target/*.jar ]; then
+                        echo "No .jar file found in target directory! Exiting."
                         exit 1
                     fi
-                    echo "mqtt-service.jar found!"
+                    echo ".jar file found!"
                     '''
                 }
             }
