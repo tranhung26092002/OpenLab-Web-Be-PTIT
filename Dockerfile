@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the jar file to the container
-COPY target/mqtt-service.jar mqtt-service.jar
+COPY target/*.jar mqtt-service.jar
 
 # Expose the port your application will run on
 EXPOSE 8080
