@@ -1,23 +1,37 @@
-version: '2'
+version: '3.8'
 services:
   mqtt-service:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: mqtt-service
-    env_file:
-      - /opt/global/.env
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    container_name: ptit-service
-    mem_limit: 512m
-    restart: always
-    networks:
-      - iotlabptit
-networks:
-  iotlabptit:
-    external:
-      name: iotlabptit
+    container_name: mqtt-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mqtt_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - MQTT_BROKER_URL=tcp://mqtt-broker:1883
+    depends_on:
+      - postgres
+      - mqtt-broker
+
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: mqtt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+
+volumes:
+  postgres_data:
