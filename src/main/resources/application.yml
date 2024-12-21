@@ -18,7 +18,7 @@ spring:
     hibernate:
       ddl-auto: update
   
-    main:
+  main:
     allow-bean-definition-overriding: true
   servlet:
     multipart:
@@ -41,9 +41,12 @@ mqtt:
   client:
     id: mqtt-service
   topic: mqtt/#
+  username: hungtran
+  password: hungtran
 
 logging:
   level:
     org.springframework: INFO
+
 
 
