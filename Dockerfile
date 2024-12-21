@@ -3,7 +3,7 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # Sao chép ứng dụng JAR
-COPY target/mqtt-service.jar /app/mqtt-service.jar
+COPY target/*.jar /app/mqtt-service.jar
 
 # Sao chép script entrypoint.sh vào container
 COPY entrypoint.sh /entrypoint.sh
