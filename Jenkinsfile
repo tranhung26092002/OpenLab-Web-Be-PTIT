@@ -63,11 +63,11 @@ pipeline {
                 script {
                     // Kiểm tra sự tồn tại của mqtt-service.jar
                     sh '''
-                    if [ ! -f target/*.jar ]; then
-                        echo "No .jar file found in target directory! Exiting."
+                    if [ ! -f target/mqtt-service.jar ]; then
+                        echo "mqtt-service.jar not found! Exiting."
                         exit 1
                     fi
-                    echo ".jar file found!"
+                    echo "mqtt-service.jar found!"
                     '''
                 }
             }
@@ -75,10 +75,10 @@ pipeline {
         stage('Build and Deploy with Docker') {
             steps {
                 script {
-                    // Using Docker Compose to build and deploy
+                    // Deploy lại các container với Docker Compose
                     echo 'Deploying application with Docker Compose...'
                     sh '''
-                    docker-compose down
+                    docker-compose down --volumes --remove-orphans
                     docker-compose up -d --build
                     '''
                 }
