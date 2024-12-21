@@ -17,6 +17,23 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+  
+    main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+      enabled: true
+      file-size-threshold: 2KB
+
+telegram:
+  chatId: ${TELEGRAM_CHAT_ID:-100}
+  apiToken: ${TELEGRAM_API_TOKEN:-}
+debug: ${DEBUG:true}
+async:
+  config:
+    core-pool-size: ${ASYNC_CORE_POOL_SIZE:3}
 
 mqtt:
   broker:
@@ -28,3 +45,5 @@ mqtt:
 logging:
   level:
     org.springframework: INFO
+
+
