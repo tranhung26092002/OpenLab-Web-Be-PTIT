@@ -38,21 +38,28 @@ pipeline {
                 }
             }
         }
+        stage('Check Docker Status') {
+            steps {
+                script {
+                    // Check Docker status and make sure it's running
+                    def dockerStatus = sh(script: 'docker info > /dev/null 2>&1; echo $? ', returnStdout: true).trim()
+                    if (dockerStatus != '0') {
+                        error 'Docker is not running, skipping deployment.'
+                    } else {
+                        echo 'Docker is running.'
+                    }
+                }
+            }
+        }
         stage('Build and Deploy with Docker') {
             steps {
                 script {
-                    // Check if Docker is running
-                    sh 'docker info > /dev/null 2>&1'
-                    if (currentBuild.result == 'SUCCESS') {
-                        echo 'Docker is running, proceeding with deployment.'
-                        // Using Docker Compose to build and deploy
-                        sh '''
-                        docker-compose down
-                        docker-compose up -d --build
-                        '''
-                    } else {
-                        error 'Docker is not running, skipping deployment.'
-                    }
+                    // Using Docker Compose to build and deploy
+                    echo 'Deploying application with Docker Compose...'
+                    sh '''
+                    docker-compose down
+                    docker-compose up -d --build
+                    '''
                 }
             }
         }
