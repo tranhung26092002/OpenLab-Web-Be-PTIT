@@ -38,16 +38,17 @@ pipeline {
                 }
             }
         }
-        stage('Check Docker Status') {
+        stage('Verify Jar Existence') {
             steps {
                 script {
-                    // Check Docker status and make sure it's running
-                    def dockerStatus = sh(script: 'docker info > /dev/null 2>&1; echo $? ', returnStdout: true).trim()
-                    if (dockerStatus != '0') {
-                        error 'Docker is not running, skipping deployment.'
-                    } else {
-                        echo 'Docker is running.'
-                    }
+                    // Kiểm tra sự tồn tại của mqtt-service.jar
+                    sh '''
+                    if [ ! -f target/mqtt-service.jar ]; then
+                        echo "mqtt-service.jar not found! Exiting."
+                        exit 1
+                    fi
+                    echo "mqtt-service.jar found!"
+                    '''
                 }
             }
         }

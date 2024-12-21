@@ -5,10 +5,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the jar file to the container
-COPY target/mqtt-service.jar app.jar
+COPY target/mqtt-service.jar mqtt-service.jar
 
 # Expose the port your application will run on
 EXPOSE 8080
 
 # Define the command to run your application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "mqtt-service.jar"]
