@@ -21,6 +21,14 @@ pipeline {
                 }
             }
         }
+        stage('Fix Permissions') {
+            steps {
+                script {
+                    // Cấp quyền thực thi cho mvnw
+                    sh 'chmod +x ./mvnw'
+                }
+            }
+        }
         stage('Build Application') {
             steps {
                 script {
