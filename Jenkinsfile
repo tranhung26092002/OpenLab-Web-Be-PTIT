@@ -55,6 +55,8 @@ pipeline {
                     // Build jar file
                     echo 'Building application...'
                     sh './mvnw clean package -DskipTests'
+                    // Liệt kê các file trong thư mục target để kiểm tra xem .jar có tồn tại không
+                    sh 'ls -l target/'
                 }
             }
         }
@@ -75,10 +77,10 @@ pipeline {
         stage('Build and Deploy with Docker') {
             steps {
                 script {
-                    // Deploy lại các container với Docker Compose
+                    // Using Docker Compose to build and deploy
                     echo 'Deploying application with Docker Compose...'
                     sh '''
-                    docker-compose down --volumes --remove-orphans
+                    docker-compose down
                     docker-compose up -d --build
                     '''
                 }
