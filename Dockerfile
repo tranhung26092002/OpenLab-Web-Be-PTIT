@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/*.jar mqtt-service.jar
 
 # Expose the port your application will run on
-EXPOSE 8080
+EXPOSE 8083
 
 # Define the command to run your application
 ENTRYPOINT ["java", "-jar", "mqtt-service.jar"]
