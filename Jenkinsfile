@@ -9,13 +9,33 @@ pipeline {
         stage('Clean Old Containers') {
             steps {
                 script {
-                    // Stop and remove old containers (if using docker-compose)
+                    // Kiểm tra và dừng các container cũ nếu có
                     sh '''
+                    # Dừng và xóa container mqtt-service nếu tồn tại
                     if [ "$(docker ps -q -f name=mqtt-service)" ]; then
-                        echo "Stopping and removing old containers"
-                        docker-compose down
+                        echo "Stopping and removing old mqtt-service container..."
+                        docker stop mqtt-service
+                        docker rm mqtt-service
                     else
-                        echo "No old containers to stop."
+                        echo "No old mqtt-service container to stop."
+                    fi
+
+                    # Dừng và xóa container postgres nếu tồn tại
+                    if [ "$(docker ps -q -f name=postgres)" ]; then
+                        echo "Stopping and removing old postgres container..."
+                        docker stop postgres
+                        docker rm postgres
+                    else
+                        echo "No old postgres container to stop."
+                    fi
+
+                    # Dừng và xóa container mqtt-broker nếu tồn tại
+                    if [ "$(docker ps -q -f name=mqtt-broker)" ]; then
+                        echo "Stopping and removing old mqtt-broker container..."
+                        docker stop mqtt-broker
+                        docker rm mqtt-broker
+                    else
+                        echo "No old mqtt-broker container to stop."
                     fi
                     '''
                 }
@@ -43,11 +63,11 @@ pipeline {
                 script {
                     // Kiểm tra sự tồn tại của mqtt-service.jar
                     sh '''
-                    if [ ! -f target/*.jar ]; then
-                        echo "No .jar file found in target directory! Exiting."
+                    if [ ! -f target/mqtt-service.jar ]; then
+                        echo "mqtt-service.jar not found! Exiting."
                         exit 1
                     fi
-                    echo ".jar file found!"
+                    echo "mqtt-service.jar found!"
                     '''
                 }
             }
