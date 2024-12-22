@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Kiểm tra thư mục config
+# Kiểm tra thư mục config và tạo nếu chưa có
 if [ ! -d "/mosquitto/config" ]; then
   echo "Tạo thư mục config..."
   mkdir -p /mosquitto/config
 fi
 
-# Kiểm tra file cấu hình mosquitto.conf
+# Kiểm tra file cấu hình mosquitto.conf và tạo nếu chưa có
 if [ ! -f "/mosquitto/config/mosquitto.conf" ]; then
   echo "File mosquitto.conf không tồn tại. Tạo file cấu hình mặc định..."
   
@@ -17,7 +17,7 @@ if [ ! -f "/mosquitto/config/mosquitto.conf" ]; then
 # Cổng nghe MQTT
 listener 1883
 
-# Cổng web admin (tuỳ chọn)
+# Cổng WebSocket
 listener 9001
 protocol websockets
 
@@ -35,7 +35,7 @@ fi
 # Kiểm tra MQTT Broker đã sẵn sàng chưa
 until nc -z -v -w30 mqtt-broker 1883
 do
-  echo "Waiting for MQTT Broker..."
+  echo "Waiting for MQTT Broker to start..."
   sleep 5
 done
 
