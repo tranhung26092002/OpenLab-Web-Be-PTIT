@@ -1,15 +1,14 @@
-FROM openjdk:11-jre-slim
+# Use a lightweight Java image
+FROM openjdk:17-jdk-slim
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Sao chép ứng dụng JAR
-COPY target/*.jar /app/mqtt-service.jar
+# Copy the jar file to the container
+COPY target/*.jar app.jar
 
-# Sao chép script entrypoint.sh vào container
-COPY entrypoint.sh /entrypoint.sh
+# Expose the port your application will run on
+EXPOSE 8083
 
-# Cấp quyền thực thi cho script
-RUN chmod +x /entrypoint.sh
-
-# Chạy ứng dụng với script entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Define the command to run your application
+ENTRYPOINT ["java", "-jar", "app.jar"]
