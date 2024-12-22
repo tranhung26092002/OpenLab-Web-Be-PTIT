@@ -15,6 +15,7 @@ services:
       - postgres
       - mqtt-broker
     entrypoint: ["/bin/bash", "-c", "/entrypoint.sh"]
+    restart: always
 
   postgres:
     image: postgres:14
@@ -27,6 +28,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
 
   mqtt-broker:
     image: eclipse-mosquitto:2.0
@@ -37,8 +39,7 @@ services:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
-    command: >
-      mosquitto -c /mosquitto/config/mosquitto.conf
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
     restart: always
 
 volumes:

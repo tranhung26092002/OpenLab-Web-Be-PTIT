@@ -1,6 +1,12 @@
 #!/bin/bash
 
+# Tạo các thư mục cần thiết cho Mosquitto nếu chưa tồn tại và cấp quyền
+echo "Setting up Mosquitto directories..."
+mkdir -p /mosquitto/config /mosquitto/data /mosquitto/log
+chmod -R 755 /mosquitto
+
 # Kiểm tra MQTT Broker đã sẵn sàng chưa
+echo "Checking if MQTT Broker is ready..."
 until nc -z -v -w30 mqtt-broker 1883
 do
   echo "Waiting for MQTT Broker..."
