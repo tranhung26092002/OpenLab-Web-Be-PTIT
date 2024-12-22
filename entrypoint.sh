@@ -4,7 +4,6 @@
 if [ ! -d "/mosquitto/config" ]; then
   echo "Tạo thư mục config..."
   mkdir -p /mosquitto/config
-  chmod 755 /mosquitto/config
 fi
 
 # Kiểm tra file cấu hình mosquitto.conf và tạo nếu chưa có
@@ -31,7 +30,6 @@ allow_anonymous true
 # Thông báo lỗi
 pid_file /mosquitto/mosquitto.pid
 EOF
-  chmod 644 /mosquitto/config/mosquitto.conf
 fi
 
 # Kiểm tra MQTT Broker đã sẵn sàng chưa
