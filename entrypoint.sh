@@ -18,7 +18,7 @@ if [ ! -f "/mosquitto/config/mosquitto.conf" ]; then
 listener 1883
 
 # Cổng web admin (tuỳ chọn)
-listener 8083
+listener 9001
 protocol websockets
 
 # Đường dẫn log

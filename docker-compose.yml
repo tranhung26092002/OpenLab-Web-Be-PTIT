@@ -33,7 +33,7 @@ services:
     container_name: mqtt-broker
     ports:
       - "1883:1883"
-      - "8083:8083"  # Websockets port
+      - "9001:9001"  # Websockets port
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
