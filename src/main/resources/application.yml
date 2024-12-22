@@ -40,13 +40,10 @@ mqtt:
     url: ${MQTT_BROKER_URL}
   client:
     id: mqtt-service
-  topic: mqtt/#
+  topic: mqtt/# 
   username: hungtran
   password: hungtran
 
 logging:
   level:
     org.springframework: INFO
-
-
-

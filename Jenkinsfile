@@ -9,7 +9,7 @@ pipeline {
         stage('Clean Old Containers') {
             steps {
                 script {
-                    // Kiểm tra và dừng các container cũ nếu có
+                    // Dừng và xóa container cũ nếu có
                     sh '''
                     # Dừng và xóa container mqtt-service nếu tồn tại
                     if [ "$(docker ps -q -f name=mqtt-service)" ]; then
@@ -44,7 +44,7 @@ pipeline {
         stage('Fix Permissions') {
             steps {
                 script {
-                    // Cấp quyền thực thi cho mvnw
+                    // Cấp quyền cho các tệp
                     sh 'chmod +x ./mvnw'
                 }
             }
