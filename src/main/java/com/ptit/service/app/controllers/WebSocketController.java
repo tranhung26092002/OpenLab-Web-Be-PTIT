@@ -3,6 +3,7 @@ package com.ptit.service.app.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ptit.service.domain.entities.Node;
 import com.ptit.service.domain.entities.SensorData;
 import com.ptit.service.domain.services.NodeService;
@@ -52,9 +53,8 @@ public class WebSocketController {
         Node node = nodeService.getNodeById(nodeId);
         if (node != null) {
             messagingTemplate.convertAndSend(
-                "/topic/sensorData/" + nodeId,
-                sensorDataService.getLatestDataForNode(nodeId)
-            );
+                    "/topic/sensorData/" + nodeId,
+                    sensorDataService.getLatestDataForNode(nodeId));
         }
     }
 
@@ -67,44 +67,40 @@ public class WebSocketController {
 
     @MessageMapping("/publish/command/{nodeId}")
     public void publishCommand(@DestinationVariable Long nodeId, @Payload String commandJson) {
+        // Nhận lệnh từ client và gửi lệnh đến thiết bị
+        log.info("Received command: {}", commandJson);
+
+        // Giả sử commandJson có cấu trúc như { "nodeName": "node_1", "led": 1 }
         try {
-            // Kiểm tra node
+            // Parse JSON command để lấy trạng thái của các thiết bị
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode commandNode = objectMapper.readTree(commandJson);
+            String nodeName = commandNode.path("nodeName").asText();
+
+            // Xử lý các thiết bị trong lệnh
             Node node = nodeService.getNodeById(nodeId);
-            if (node == null) {
-                log.warn("Node with ID " + nodeId + " not found.");
-                return;
+            if (node != null) {
+                // Tạo thông điệp MQTT chứa các trạng thái thiết bị
+                ObjectNode mqttMessage = objectMapper.createObjectNode();
+
+                // Lặp qua tất cả các trường trong lệnh (ngoại trừ "nodeName")
+                commandNode.fieldNames().forEachRemaining(field -> {
+                    if (!field.equals("nodeName")) {
+                        mqttMessage.put(field, commandNode.path(field).asInt()); // Thêm các thiết bị (led, buzzer, etc.)
+                    }
+                });
+
+                // Gửi thông điệp MQTT đến thiết bị
+                String mqttCommand = mqttMessage.toString();
+                try {
+                    mqttClient.publish("mqtt/remote/gateway", mqttCommand.getBytes(), 2, false);
+                    log.info("Command published to MQTT: {}", mqttCommand);
+                } catch (Exception e) {
+                    log.error("Error publishing command", e);
+                }
             }
-
-            // Parse outer JSON
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootCommand = mapper.readTree(commandJson);
-
-            // Kiểm tra và trích xuất inner JSON
-            if (!rootCommand.has("command")) {
-                log.warn("Missing 'command' field in payload: " + commandJson);
-                return;
-            }
-
-            String innerCommandJson = rootCommand.get("command").asText();
-            JsonNode innerCommand = mapper.readTree(innerCommandJson);
-
-            // Log thông tin command
-            log.info("Node ID: " + nodeId + ", Parsed command: " + innerCommand.toString());
-
-            // Chuẩn bị và gửi MQTT message
-            MqttMessage notificationMessage = new MqttMessage(innerCommand.toString().getBytes(StandardCharsets.UTF_8));
-            mqttClient.publish(
-                    "mqtt/remote/gateway", // Chủ đề động theo nodeId
-                    notificationMessage
-            );
-
-            log.info("Command published to MQTT topic 'mqtt/remote/gateway/" + nodeId + "'");
-        } catch (JsonProcessingException e) {
-            log.error("Error parsing JSON: " + commandJson, e);
-        } catch (MqttException e) {
-            log.error("Error publishing MQTT message for node ID " + nodeId, e);
         } catch (Exception e) {
-            log.error("Unexpected error while processing command for node ID " + nodeId, e);
+            log.error("Error processing command JSON", e);
         }
     }
 }
