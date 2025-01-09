@@ -10,7 +10,7 @@ spring:
     name: MQTT-SERVICE
     environment: ${ENVIRONMENT:DEV}
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mqtt_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/mqtt_db}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:hungtran}
     driver-class-name: org.postgresql.Driver
@@ -42,7 +42,7 @@ async:
 
 mqtt:
   broker:
-    url: ${MQTT_BROKER_URL:tcp://localhost:1883}
+    url: ${MQTT_BROKER_URL:tcp://14.225.255.177:1883}
   client:
     id: mqtt-service
   topic: mqtt/# 

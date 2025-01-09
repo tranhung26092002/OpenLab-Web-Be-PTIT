@@ -110,7 +110,7 @@ public class MqttService extends BaseService{
         }
     }
 
-    @Scheduled(fixedRate = 60000) // Thực thi mỗi 10 giây
+    @Scheduled(fixedRate = 10000) // Thực thi mỗi 10 giây
     public void publishNodeStatusToGateway() {
         try {
             // Lấy danh sách tất cả các node từ cơ sở dữ liệu
