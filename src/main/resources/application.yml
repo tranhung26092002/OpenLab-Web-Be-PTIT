@@ -1,0 +1,79 @@
+server:
+  port: 8085
+  address: 0.0.0.0
+
+  servlet:
+    context-path: /mqtt
+spring:
+  mvc:
+    dispatch-options-request: true
+  application:
+    name: MQTT-SERVICE
+    environment: ${ENVIRONMENT:DEV}
+  datasource:
+    url: ${POSTGRESQL_DATABASE_URL:jdbc:postgresql://localhost:5432/small_kit}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:hungtran}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:50000}
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:100}
+      max-lifetime: ${DB_MAX_LIFETIME:1000000}
+  jpa:
+    show-sql: ${DEBUG:true}
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        temp:
+          use_jdbc_metadata_defaults: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: ${DEBUG:true}
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+      enabled: true
+      file-size-threshold: 2KB
+telegram:
+  chatId: ${TELEGRAM_CHAT_ID:-100}
+  apiToken: ${TELEGRAM_API_TOKEN:-}
+debug: ${DEBUG:true}
+
+async:
+  config:
+    core-pool-size: ${ASYNC_CORE_POOL_SIZE:3}
+logging:
+  level:
+    root: info
+    com:
+      ptit:
+        service:
+          domain:
+            services: debug
+    org:
+      springframework:
+        boot:
+          autoconfigure: INFO
+
+mqtt:
+  broker:
+    url: tcp://14.225.255.177:1883
+  client:
+    id: mqtt-service
+  topic: mqtt/#
+  username: hungtran
+  password: hungtran
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
